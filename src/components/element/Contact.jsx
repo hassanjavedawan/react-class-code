@@ -46,8 +46,10 @@ export default class Contact extends Component {
   };
 
   handleGet = () => {
+    var arr = [];
     onValue(ref(database, "user/"), data => {
-      console.log(data.val());
+      arr.push(data.val());
+      console.log(arr);
     });
   };
   handleUploadFile = e => {
