@@ -2,6 +2,9 @@
 
 import React, { Component } from "react";
 
+import { getDatabase, onValue, push, ref, set } from "firebase/database";
+import { firebase } from "../../config/firebase";
+const database = getDatabase(firebase);
 export default class Contact extends Component {
   constructor() {
     super();
@@ -23,12 +26,32 @@ export default class Contact extends Component {
       //   },
       // ],
     };
+
+    // const database  = firebase.database();
   }
 
   handleSubmit = () => {
-    console.log("my name is:====>", this.state.name);
-    console.log("message:====>", this.state.message);
+    // console.log("my name is:====>", this.state.name);
+    // console.log("message:====>", this.state.message);
+
+    push(ref(database, "user/"), {
+      userName: this.state.name,
+      userMessage: this.state.message,
+    })
+      .then(() => {
+        alert("data submit");
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
+
+  handleGet = () => {
+    onValue(ref(database, "user/"), data => {
+      console.log(data.val());
+    });
+  };
+
   render() {
     return (
       <div className='container'>
@@ -71,6 +94,12 @@ export default class Contact extends Component {
                   className='btn btn-primary mb-3'
                   onClick={this.handleSubmit}>
                   submit
+                </button>
+                <button
+                
+                  className='btn btn-primary mb-3'
+                  onClick={this.handleGet}>
+                  Get data
                 </button>
               </div>
             </div>
