@@ -2,7 +2,15 @@
 
 import React, { Component } from "react";
 
-import { getDatabase, onValue, push, ref } from "firebase/database";
+import {
+  child,
+  get,
+  getDatabase,
+  onValue,
+  push,
+  ref,
+  set,
+} from "firebase/database";
 import {
   getDownloadURL,
   getStorage,
@@ -23,6 +31,7 @@ export default class Contact extends Component {
       file: null,
       progress: 0,
       imgUrl: "",
+      data: [],
     };
 
     // const database  = firebase.database();
@@ -31,11 +40,11 @@ export default class Contact extends Component {
   handleSubmit = () => {
     // console.log("my name is:====>", this.state.name);
     // console.log("message:====>", this.state.message);
-
-    push(ref(database, "user/"), {
+    const newPostKey = push(child(ref(database), "posts")).key;
+    set(ref(database, `user/${newPostKey}`), {
       userName: this.state.name,
       userMessage: this.state.message,
-      file: this.state.imgUrl,
+      // file: this.state.imgUrl,
     })
       .then(() => {
         alert("data submit");
@@ -46,12 +55,31 @@ export default class Contact extends Component {
   };
 
   handleGet = () => {
-    var arr = [];
-    onValue(ref(database, "user/"), data => {
-      arr.push(data.val());
-      console.log(arr);
+    // get(child(ref(database),"user/"), data => {
+    //   if (data.exists()) {
+    //     console.log(data.val());
+    //   } else {
+    //     console.log("No data available");
+    //   }
+    //   // arr.push(data.val());
+    //   // console.log(arr);
+    //   // this.setState({ data: data.val() });
+    //   // console.log(data.val());
+    // });
+    const myRef = ref(database, "user");
+    onValue(myRef, snapshot => {
+      let data = [];
+      snapshot.forEach(childSnapshot => {
+        data.push({
+          id: childSnapshot.key,
+          ...childSnapshot.val(),
+        });
+      });
+      this.setState({ data: data });
     });
+    console.log(this.state.data);
   };
+
   handleUploadFile = e => {
     const file = e.target.files[0];
     const ref = myRef(storage, "cardImages/" + file.name);
@@ -101,6 +129,7 @@ export default class Contact extends Component {
       },
     );
   };
+
   render() {
     return (
       <div className='container'>
@@ -185,8 +214,14 @@ export default class Contact extends Component {
           </div>
           <div className='col-md-6 mt-5'>
             <h2 className='text-center'>Form data</h2>
-            <div className='mb-3 mt-5'>Name: {this.state.name}</div>
-            <div className='mb-3'>Message: {this.state.message}</div>
+            {this.state.data.map(v => {
+              return (
+                <div className='card mt-3' key={v.id}>
+                  <div className='mb-3 mt-5'>Name: {v?.userName}</div>
+                  <div className='mb-3'>Message: {v?.userMessage}</div>
+                </div>
+              );
+            })}
 
             <div className='mb-3'>
               <h2>
