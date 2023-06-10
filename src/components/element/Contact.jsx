@@ -32,6 +32,7 @@ export default class Contact extends Component {
       progress: 0,
       imgUrl: "",
       data: [],
+      
     };
 
     // const database  = firebase.database();
