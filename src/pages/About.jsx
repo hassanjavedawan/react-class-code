@@ -8,6 +8,7 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { set, ref, getDatabase } from "firebase/database";
 import Tab from "react-bootstrap/Tab";
@@ -98,6 +99,20 @@ const About = () => {
       .catch(error => {
         // An error happened.
         console.log(error);
+      });
+  };
+
+  const handleRest = () => {
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        // Password reset email sent!
+        alert("Password reset email sent!");
+      })
+      .catch(error => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        // ..
       });
   };
 
@@ -215,6 +230,12 @@ const About = () => {
                           Login
                         </button>
                       </div>
+                      <div className='mb-3 text-center'>
+                        <button className='btn btn-link' onClick={handleRest}>
+                          Forget password
+                        </button>
+                      </div>
+
                       <div className='mb-3 text-center'>
                         <p className='text-danger'>{error}</p>
                       </div>
