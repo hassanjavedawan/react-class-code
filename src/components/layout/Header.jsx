@@ -23,7 +23,7 @@ export default class Header extends Component {
           <div className='collapse navbar-collapse' id='navbarText'>
             <ul className='navbar-nav m-auto mb-2 mb-lg-0'>
               <li className='nav-item'>
-                <Link className='nav-link active' aria-current='page' to='/'>
+                <Link className='nav-link text-dark  active' aria-current='page' to='/'>
                   Home
                 </Link>
               </li>
